@@ -13,11 +13,11 @@ class BoundingBox:
     """
     A detected landing pad in image space.
     """
+
     __create_key = object()
 
     @classmethod
-    def create(cls,
-               bounds: np.ndarray) -> "tuple[bool, BoundingBox | None]":
+    def create(cls, bounds: np.ndarray) -> "tuple[bool, BoundingBox | None]":
         """
         bounds are of form x1, y1, x2, y2 .
         """
@@ -35,7 +35,9 @@ class BoundingBox:
         """
         Private constructor, use create() method.
         """
-        assert class_private_create_key is BoundingBox.__create_key, "Use create() method"
+        assert (
+            class_private_create_key is BoundingBox.__create_key
+        ), "Use create() method"
 
         # Mixing letters and numbers confuses Pylint
         # pylint: disable=invalid-name
@@ -46,29 +48,39 @@ class BoundingBox:
         # pylint: enable=invalid-name
 
     @staticmethod
-    def __is_within_tolerance(number_a: float, number_b: float, tolerance: float) -> bool:
+    def __is_within_tolerance(
+        number_a: float, number_b: float, tolerance: float
+    ) -> bool:
         """
         Checks if 2 numbers are within a tolerance.
         """
         return abs(number_a - number_b) <= tolerance
 
     @staticmethod
-    def is_close(bounding_box_1: "BoundingBox",
-                 bounding_box_2: "BoundingBox",
-                 tolerance: float) -> bool:
+    def is_close(
+        bounding_box_1: "BoundingBox", bounding_box_2: "BoundingBox", tolerance: float
+    ) -> bool:
         """
         Whether the bounds are close enough.
         """
-        if not BoundingBox.__is_within_tolerance(bounding_box_1.x1, bounding_box_2.x1, tolerance):
+        if not BoundingBox.__is_within_tolerance(
+            bounding_box_1.x1, bounding_box_2.x1, tolerance
+        ):
             return False
 
-        if not BoundingBox.__is_within_tolerance(bounding_box_1.y1, bounding_box_2.y1, tolerance):
+        if not BoundingBox.__is_within_tolerance(
+            bounding_box_1.y1, bounding_box_2.y1, tolerance
+        ):
             return False
 
-        if not BoundingBox.__is_within_tolerance(bounding_box_1.x2, bounding_box_2.x2, tolerance):
+        if not BoundingBox.__is_within_tolerance(
+            bounding_box_1.x2, bounding_box_2.x2, tolerance
+        ):
             return False
 
-        if not BoundingBox.__is_within_tolerance(bounding_box_1.y2, bounding_box_2.y2, tolerance):
+        if not BoundingBox.__is_within_tolerance(
+            bounding_box_1.y2, bounding_box_2.y2, tolerance
+        ):
             return False
 
         return True
@@ -85,6 +97,8 @@ class BoundingBox:
         """
         To string.
         """
-        representation = "Bounding box: " + str((self.x1, self.y1)) + "," + str((self.x2, self.y2))
+        representation = (
+            "Bounding box: " + str((self.x1, self.y1)) + "," + str((self.x2, self.y2))
+        )
 
         return representation

@@ -3,6 +3,7 @@ BOOTCAMPERS DO NOT MODIFY THIS FILE.
 
 Unit tests.
 """
+
 import pathlib
 
 import cv2
@@ -67,7 +68,9 @@ def test_single_landing_pad(detector: detect_landing_pad.DetectLandingPad):
     for i, actual_box in enumerate(actual_boxes):
         expected = expected_boxes[i]
         assert expected is not None
-        assert bounding_box.BoundingBox.is_close(actual_box, expected, BOUNDING_BOX_TOLERANCE)
+        assert bounding_box.BoundingBox.is_close(
+            actual_box, expected, BOUNDING_BOX_TOLERANCE
+        )
 
     # Pylint has issues with OpenCV
     # pylint: disable-next=no-member
@@ -105,7 +108,9 @@ def test_double_landing_pad(detector: detect_landing_pad.DetectLandingPad):
     for i, actual_box in enumerate(actual_boxes):
         expected = expected_boxes[i]
         assert expected is not None
-        assert bounding_box.BoundingBox.is_close(actual_box, expected, BOUNDING_BOX_TOLERANCE)
+        assert bounding_box.BoundingBox.is_close(
+            actual_box, expected, BOUNDING_BOX_TOLERANCE
+        )
 
     # Pylint has issues with OpenCV
     # pylint: disable-next=no-member

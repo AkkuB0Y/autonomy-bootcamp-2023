@@ -3,6 +3,7 @@ BOOTCAMPERS TO COMPLETE.
 
 Travel to designated waypoint.
 """
+
 # Disable for bootcamp use
 # pylint: disable=unused-import
 
@@ -24,6 +25,7 @@ class DecisionSimpleWaypoint(base_decision.BaseDecision):
     """
     Travel to the designed waypoint.
     """
+
     def __init__(self, waypoint: location.Location, acceptance_radius: float):
         """
         Initialize all persistent variables here with self.
@@ -37,15 +39,29 @@ class DecisionSimpleWaypoint(base_decision.BaseDecision):
         # ↓ BOOTCAMPERS MODIFY BELOW THIS COMMENT ↓
         # ============
 
-        # Add your own
+        print(str(waypoint.location_x) + ", " + str(waypoint.location_y))
+
+        # assuming this is to give destinations n stuff
+        self.command_index = 0
+        self.commands = [
+            commands.Command.create_set_relative_destination_command(
+                waypoint.location_x, waypoint.location_y
+            ),
+        ]
+
+        self.has_sent_landing_command = False
+
+        self.counter = 0
 
         # ============
         # ↑ BOOTCAMPERS MODIFY ABOVE THIS COMMENT ↑
         # ============
 
-    def run(self,
-            report: drone_report.DroneReport,
-            landing_pad_locations: "list[location.Location]") -> commands.Command:
+    def run(
+        self,
+        report: drone_report.DroneReport,
+        landing_pad_locations: "list[location.Location]",
+    ) -> commands.Command:
         """
         Make the drone fly to the waypoint.
 
@@ -68,13 +84,32 @@ class DecisionSimpleWaypoint(base_decision.BaseDecision):
         # ↓ BOOTCAMPERS MODIFY BELOW THIS COMMENT ↓
         # ============
 
-        # Do something based on the report and the state of this class...
+        # Default command
+        command = commands.Command.create_null_command()
 
-        # Remove this when done
-        raise NotImplementedError
+        if (
+            report.status == drone_status.DroneStatus.HALTED
+            and self.command_index < len(self.commands)
+        ):
+            # Print some information for debugging
+            print(self.counter)
+            print(self.command_index)
+            print("Halted at: " + str(report.position))
+
+            command = self.commands[self.command_index]
+            self.command_index += 1
+        elif (
+            report.status == drone_status.DroneStatus.HALTED
+            and not self.has_sent_landing_command
+        ):
+            command = commands.Command.create_land_command()
+
+            self.has_sent_landing_command = True
+
+        self.counter += 1
+
+        return command
 
         # ============
         # ↑ BOOTCAMPERS MODIFY ABOVE THIS COMMENT ↑
         # ============
-
-        return command

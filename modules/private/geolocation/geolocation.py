@@ -15,13 +15,13 @@ class Geolocation:
     Basically does the reverse of the simulator.
     Camera is straight down without rotation.
     """
+
     __create_key = object()
 
     @classmethod
-    def create(cls,
-               pixels_per_metre: int,
-               resolution_x: int,
-               resolution_y: int) -> "tuple[bool, Geolocation | None]":
+    def create(
+        cls, pixels_per_metre: int, resolution_x: int, resolution_y: int
+    ) -> "tuple[bool, Geolocation | None]":
         """
         pixels_per_metre: Assumes square pixels.
         """
@@ -34,17 +34,23 @@ class Geolocation:
         if pixels_per_metre < 1:
             return False, None
 
-        return True, Geolocation(cls.__create_key, pixels_per_metre, resolution_x, resolution_y)
+        return True, Geolocation(
+            cls.__create_key, pixels_per_metre, resolution_x, resolution_y
+        )
 
-    def __init__(self,
-                 class_private_create_key,
-                 pixels_per_metre: int,
-                 resolution_x: int,
-                 resolution_y: int):
+    def __init__(
+        self,
+        class_private_create_key,
+        pixels_per_metre: int,
+        resolution_x: int,
+        resolution_y: int,
+    ):
         """
         Private constructor, use create() method.
         """
-        assert class_private_create_key is Geolocation.__create_key, "Use create() method"
+        assert (
+            class_private_create_key is Geolocation.__create_key
+        ), "Use create() method"
 
         self.__pixels_per_metre = pixels_per_metre
 
@@ -54,24 +60,33 @@ class Geolocation:
     @staticmethod
     # Better to be explicit with parameters
     # pylint: disable-next=too-many-arguments
-    def __position_from_pixel_coordinates(pixels_per_metre: int,
-                                          resolution_x: int,
-                                          resolution_y: int,
-                                          pixel_x: float,
-                                          pixel_y: float,
-                                          camera_position: location.Location) -> location.Location:
+    def __position_from_pixel_coordinates(
+        pixels_per_metre: int,
+        resolution_x: int,
+        resolution_y: int,
+        pixel_x: float,
+        pixel_y: float,
+        camera_position: location.Location,
+    ) -> location.Location:
         """
         Gets the relative position.
         """
-        position_x = (pixel_x - resolution_x / 2) / pixels_per_metre + camera_position.location_x
+        position_x = (
+            pixel_x - resolution_x / 2
+        ) / pixels_per_metre + camera_position.location_x
         # Positive y is up
-        position_y = -(pixel_y - resolution_y / 2) / pixels_per_metre + camera_position.location_y
+        position_y = (
+            -(pixel_y - resolution_y / 2) / pixels_per_metre
+            + camera_position.location_y
+        )
 
         return location.Location(position_x, position_y)
 
-    def run(self,
-            report: drone_report.DroneReport,
-            bounding_boxes: "list[bounding_box.BoundingBox]") -> "list[location.Location]":
+    def run(
+        self,
+        report: drone_report.DroneReport,
+        bounding_boxes: "list[bounding_box.BoundingBox]",
+    ) -> "list[location.Location]":
         """
         Converts the centre of bounding boxes into locations on the map.
         """

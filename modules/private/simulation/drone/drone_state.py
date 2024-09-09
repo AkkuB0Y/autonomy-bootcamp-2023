@@ -3,6 +3,7 @@ BOOTCAMPERS DO NOT MODIFY THIS FILE.
 
 Simple simulation of drone in world.
 """
+
 import math
 
 from . import drone_velocity
@@ -18,18 +19,21 @@ class DroneState:
     """
     Contains drone simulation state.
     """
+
     __create_key = object()
 
     __MAX_SPEED = 5.0  # m/s
     __MAX_ACCEPTANCE_RADIUS = 1.0
 
     @classmethod
-    def create(cls,
-               time_step_size: float,
-               initial_position: location.Location,
-               boundary_bottom_left: location.Location,
-               boundary_top_right: location.Location,
-               acceptance_radius: float) -> "tuple[bool, DroneState | None]":
+    def create(
+        cls,
+        time_step_size: float,
+        initial_position: location.Location,
+        boundary_bottom_left: location.Location,
+        boundary_top_right: location.Location,
+        acceptance_radius: float,
+    ) -> "tuple[bool, DroneState | None]":
         """
         time_step_size: \\delta t in seconds.
         initial_position: Initial position of drone.
@@ -45,7 +49,9 @@ class DroneState:
         if boundary_bottom_left.location_y >= boundary_top_right.location_y:
             return False, None
 
-        if not cls.__is_within_boundary(initial_position, boundary_bottom_left, boundary_top_right):
+        if not cls.__is_within_boundary(
+            initial_position, boundary_bottom_left, boundary_top_right
+        ):
             return False, None
 
         if acceptance_radius <= 0.0:
@@ -65,17 +71,21 @@ class DroneState:
 
     # Better to be explicit with parameters
     # pylint: disable-next=too-many-arguments
-    def __init__(self,
-                 class_private_create_key,
-                 time_step_size: float,
-                 initial_position: location.Location,
-                 boundary_bottom_left: location.Location,
-                 boundary_top_right: location.Location,
-                 acceptance_radius: float):
+    def __init__(
+        self,
+        class_private_create_key,
+        time_step_size: float,
+        initial_position: location.Location,
+        boundary_bottom_left: location.Location,
+        boundary_top_right: location.Location,
+        acceptance_radius: float,
+    ):
         """
         Private constructor, use create() method.
         """
-        assert class_private_create_key is DroneState.__create_key, "Use create() method"
+        assert (
+            class_private_create_key is DroneState.__create_key
+        ), "Use create() method"
 
         # Map area boundary
         self.__boundary_top_left = boundary_bottom_left
@@ -98,25 +108,31 @@ class DroneState:
         self.__position = initial_position
 
     @staticmethod
-    def __is_within_boundary(position: location.Location,
-                             boundary_bottom_left: location.Location,
-                             boundary_top_right: location.Location) -> bool:
+    def __is_within_boundary(
+        position: location.Location,
+        boundary_bottom_left: location.Location,
+        boundary_top_right: location.Location,
+    ) -> bool:
         """
         Checks whether position is within bounds.
         """
-        if position.location_x < boundary_bottom_left.location_x \
-            or position.location_x > boundary_top_right.location_x:
+        if (
+            position.location_x < boundary_bottom_left.location_x
+            or position.location_x > boundary_top_right.location_x
+        ):
             return False
 
-        if position.location_y < boundary_bottom_left.location_y \
-            or position.location_y > boundary_top_right.location_y:
+        if (
+            position.location_y < boundary_bottom_left.location_y
+            or position.location_y > boundary_top_right.location_y
+        ):
             return False
 
         return True
 
-    def __update_intent(self,
-                        status: drone_status.DroneStatus,
-                        destination: location.Location):
+    def __update_intent(
+        self, status: drone_status.DroneStatus, destination: location.Location
+    ):
         """
         Update intent of drone.
         """
@@ -129,7 +145,9 @@ class DroneState:
         else:
             relative_x = self.__destination.location_x - self.__position.location_x
             relative_y = self.__destination.location_y - self.__position.location_y
-            result, velocity = self.__set_course(self.__MAX_SPEED, relative_x, relative_y)
+            result, velocity = self.__set_course(
+                self.__MAX_SPEED, relative_x, relative_y
+            )
             if not result:
                 return
 
@@ -139,9 +157,9 @@ class DroneState:
         self.__velocity = velocity
 
     @staticmethod
-    def __calculate_global_destination(drone_position: location.Location,
-                                       relative_x: float,
-                                       relative_y: float) -> location.Location:
+    def __calculate_global_destination(
+        drone_position: location.Location, relative_x: float, relative_y: float
+    ) -> location.Location:
         """
         Calculates destination in world.
         """
@@ -155,7 +173,9 @@ class DroneState:
 
         Returns whether successful.
         """
-        print("Setting relative destination: " + str(relative_x) + "," + str(relative_y))
+        print(
+            "Setting relative destination: " + str(relative_x) + "," + str(relative_y)
+        )
 
         # Drone is halted
         if self.__status != drone_status.DroneStatus.HALTED:
@@ -163,9 +183,7 @@ class DroneState:
             return False
 
         destination = self.__calculate_global_destination(
-            self.__position,
-            relative_x,
-            relative_y
+            self.__position, relative_x, relative_y
         )
 
         # Destination is within bounds
@@ -268,24 +286,26 @@ class DroneState:
         velocity_x, velocity_y = self.__velocity.get_xy_velocity()
 
         # Closeness
-        if self.__is_close(position_x, destination_x, self.__acceptance_radius) \
-            and self.__is_close(position_y, destination_y, self.__acceptance_radius):
+        if self.__is_close(
+            position_x, destination_x, self.__acceptance_radius
+        ) and self.__is_close(position_y, destination_y, self.__acceptance_radius):
             # Required for separation
             return True
 
         # Overshoot
         # If same sign, drone is still on the way
-        if (destination_x - position_x) * velocity_x <= 0.0 \
-            and (destination_y - position_y) * velocity_y <= 0.0:
+        if (destination_x - position_x) * velocity_x <= 0.0 and (
+            destination_y - position_y
+        ) * velocity_y <= 0.0:
             # Required for separation
             return True
 
         return False
 
     @staticmethod
-    def __set_course(speed: float,
-                     relative_x: float,
-                     relative_y: float) -> "tuple[bool, drone_velocity.DroneVelocity | None]":
+    def __set_course(
+        speed: float, relative_x: float, relative_y: float
+    ) -> "tuple[bool, drone_velocity.DroneVelocity | None]":
         """
         Helm, set course for Earth.
         """
@@ -293,10 +313,12 @@ class DroneState:
 
         result, velocity = drone_velocity.DroneVelocity.create(speed, direction)
         if not result:
-            message = "ERROR: Could not set course with speed: " \
-                           + str(speed) \
-                           + ", direction: " \
-                           + str(direction)
+            message = (
+                "ERROR: Could not set course with speed: "
+                + str(speed)
+                + ", direction: "
+                + str(direction)
+            )
 
             print(message)
             return False, None
@@ -331,5 +353,7 @@ class DroneState:
         current_step = self.__current_step
         self.__current_step += 1
 
-        report = drone_report.DroneReport(self.__status, self.__destination, self.__position)
+        report = drone_report.DroneReport(
+            self.__status, self.__destination, self.__position
+        )
         return report, current_step

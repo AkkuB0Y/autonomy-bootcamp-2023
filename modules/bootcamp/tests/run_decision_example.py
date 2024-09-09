@@ -6,6 +6,7 @@ Test decision example.
 You can change the timestep, display scale, and seed, if you wish.
 Do not modify anything else.
 """
+
 import multiprocessing as mp
 import pathlib
 import time
@@ -36,7 +37,7 @@ TIME_WAIT_BEFORE_EXIT = 5  # seconds
 # to reach the 1st command
 # Increase the step size if your computer is lagging
 # Larger step size is smaller FPS
-TIME_STEP_SIZE = 0.1  # seconds
+TIME_STEP_SIZE = 2  # seconds
 
 # OpenCV ignores your display settings,
 # so if the window is too small or too large,
@@ -218,11 +219,16 @@ def main() -> int:
     report = worker_status_queue.queue.get(timeout=TIMEOUT)
 
     # Log results
-    results_text = \
-        str(report) + "\n"\
-        + "Seed: " + str(SEED) + "\n"\
-        + "Waypoint: " + str(waypoint) + "\n"\
-
+    results_text = (
+        str(report)
+        + "\n"
+        + "Seed: "
+        + str(SEED)
+        + "\n"
+        + "Waypoint: "
+        + str(waypoint)
+        + "\n"
+    )
     for landing_pad_location in landing_pad_locations:
         results_text += "Landing pad: " + str(landing_pad_location) + "\n"
 

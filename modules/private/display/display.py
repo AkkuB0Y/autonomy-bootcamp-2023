@@ -3,6 +3,7 @@ BOOTCAMPERS DO NOT MODIFY THIS FILE.
 
 Displays the map and drone information.
 """
+
 import pathlib
 import time
 
@@ -17,6 +18,7 @@ class Display:
     """
     Draws the display.
     """
+
     __create_key = object()
 
     __PANE_RESOLUTION_X = 400
@@ -67,10 +69,12 @@ class Display:
     @staticmethod
     # Extra variables required for display
     # pylint: disable-next=too-many-locals
-    def __generate_information_pane(resolution_x: int,
-                                    resolution_y: int,
-                                    report: drone_report.DroneReport,
-                                    seed: int) -> np.ndarray:
+    def __generate_information_pane(
+        resolution_x: int,
+        resolution_y: int,
+        report: drone_report.DroneReport,
+        seed: int,
+    ) -> np.ndarray:
         """
         Draws the information pane from the drone report.
         """
@@ -262,7 +266,10 @@ class Display:
         display_image = np.concatenate((map_image, pane_image), axis=1)
 
         # Save landing image
-        if not self.__has_saved_landing_image and report.status == drone_status.DroneStatus.LANDED:
+        if (
+            not self.__has_saved_landing_image
+            and report.status == drone_status.DroneStatus.LANDED
+        ):
             prefix_text = str(int(time.time()))
             image_name = prefix_text + "_" + self.__LANDING_IMAGE_NAME
             image_path = pathlib.PurePosixPath(self.__IMAGE_SAVE_DIRECTORY, image_name)

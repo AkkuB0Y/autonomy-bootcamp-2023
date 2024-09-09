@@ -51,7 +51,9 @@ def report():
 # pylint: disable=redefined-outer-name
 
 
-def test_input_empty(locator: geolocation.Geolocation, report: drone_report.DroneReport):
+def test_input_empty(
+    locator: geolocation.Geolocation, report: drone_report.DroneReport
+):
     """
     No bounding boxes.
     """
